@@ -1,9 +1,18 @@
 import math
 
 import pygame
-from constants import (BLACK, HEX_HEIGHT, HEX_SIZE, HEX_WIDTH, LINE_WIDTH,
-                       SCREEN_HEIGHT, SCREEN_WIDTH, UNIT_HEIGHT, UNIT_SIZE,
-                       WHITE)
+from constants import (
+    BLACK,
+    HEX_HEIGHT,
+    HEX_SIZE,
+    HEX_WIDTH,
+    LINE_WIDTH,
+    SCREEN_HEIGHT,
+    SCREEN_WIDTH,
+    UNIT_HEIGHT,
+    UNIT_SIZE,
+    WHITE,
+)
 from functions import attack, move
 from hexagon import Hexagon
 from image_dict import unit_images
