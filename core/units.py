@@ -1,4 +1,5 @@
 import random
+
 from constants import HEX_HEIGHT, HEX_WIDTH
 
 
@@ -25,9 +26,11 @@ class Unit:
                 (255, 0, 0) if self.active else (255, 165, 0)
             )  # Красный или оранжевый
         elif self.side == "player":
-            return (0, 128, 0) if self.active else (0, 0, 255)  # Зеленый или синий
-        elif self.side == None:
-            return (255, 255, 255) if self.active else (255, 255, 255)  # ,белый
+            return (0, 128, 0) if self.active else (0, 0, 255)
+        # Зеленый или синий
+        elif self.side is None:
+            return (255, 255, 255) if self.active else (255, 255, 255)
+        # белый
 
     # Генерируем случайное число солдат при создании юнита
     def generate_number_soldiers(self):
@@ -36,10 +39,11 @@ class Unit:
     def can_swap_with(self, other_unit):
         # Проверка условий для обмена местами
         return (
-            self.side == other_unit.side  # Оба юнита принадлежат одному игроку
-            or other_unit.side
-            == None  # Если второй выбеленный объект пустой, а первый нет
-            and self.side != None
+            # Оба юнита принадлежат одному игроку
+            self.side == other_unit.side
+            # Если второй выбеленный объект пустой, а первый нет
+            or other_unit.side is None
+            and self.side is not None
             and self.active
             and other_unit.active  # Оба юнита активны
             and abs(self.x - other_unit.x) < HEX_WIDTH * 1.1

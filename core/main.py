@@ -1,10 +1,13 @@
-import pygame
 import math
+
+import pygame
+from constants import (BLACK, HEX_HEIGHT, HEX_SIZE, HEX_WIDTH, LINE_WIDTH,
+                       SCREEN_HEIGHT, SCREEN_WIDTH, UNIT_HEIGHT, UNIT_SIZE,
+                       WHITE)
+from functions import attack, move
 from hexagon import Hexagon
-from units import Unit
-from constants import *
 from image_dict import unit_images
-from functions import move, attack
+from units import Unit
 
 # Инициализация Pygame
 pygame.init()
@@ -70,6 +73,33 @@ for row in range(2, 4):
 running = True
 selected_units = []  # Список выбранных юнитов
 
+
+def add_unit_selected_list(units, hexagon, selected_units):
+    for row in units:
+        for unit in row:
+            if unit.x == hexagon.x and unit.y == hexagon.y:
+                if unit not in selected_units:
+                    selected_units.append(unit)  # Добавляем выбранный юнит
+                    unit.active = True
+                else:
+                    # Если юнит уже был выбран, убираем его из выбранных
+                    selected_units.remove(unit)
+                    unit.active = False
+
+
+def check_hexagon_on_click(hexagons):
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    for row in hexagons:
+        for hexagon in row:
+            # Вычисляем расстояние от точки нажатия до центра гексагона
+            distance = math.sqrt(
+                (mouse_x - hexagon.x) ** 2 + (mouse_y - hexagon.y) ** 2
+            )
+            if distance < HEX_SIZE:
+                # Проверяем, был ли выбран юнит на этом гексе
+                add_unit_selected_list(units, hexagon, selected_units)
+
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -78,66 +108,28 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:  # Левая кнопка мыши
                 # Проверяем, на каком гексагоне было нажатие мыши
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                for row in hexagons:
-                    for hexagon in row:
-                        # Вычисляем расстояние от точки нажатия до центра гексагона
-                        distance = math.sqrt(
-                            (mouse_x - hexagon.x) ** 2 + (mouse_y - hexagon.y) ** 2
-                        )
-                        if distance < HEX_SIZE:
-                            # Проверяем, был ли выбран юнит на этом гексе
-                            for row in units:
-                                for unit in row:
-                                    if unit.x == hexagon.x and unit.y == hexagon.y:
-                                        if unit not in selected_units:
-                                            selected_units.append(
-                                                unit
-                                            )  # Добавляем выбранный юнит
-                                            unit.active = True
-                                        else:
-                                            # Если юнит уже был выбран, убираем его из выбранных
-                                            selected_units.remove(unit)
-                                            unit.active = False
+                check_hexagon_on_click(hexagons)
 
     # Если выбрано два юнита и они могут обменяться местами
     if len(selected_units) == 2:
-        #     active_unit, target_unit = selected_units[0], selected_units[1]
+        active_unit, target_unit = selected_units[0], selected_units[1]
 
-        #     if active_unit.can_swap_with(target_unit):
-        #         # Обмен местами
-        #         active_unit.x, target_unit.x = (
-        #             target_unit.x,
-        #             active_unit.x,
-        #         )
-        #         active_unit.y, target_unit.y = (
-        #             target_unit.y,
-        #             active_unit.y,
-        #         )
-        #         for unit in selected_units:
-        #             unit.active = False
-        #         selected_units = []  # Очищаем список выбранных юнитов
-        move(selected_units)
-        attack(selected_units)
+        if active_unit.can_swap_with(target_unit):
+            move(active_unit, target_unit)
+            for unit in selected_units:
+                unit.active = False
+            selected_units = []  # Очищаем список выбранных юнитов
 
         # Взаимодействие между враждебными юнитами
-        # if (
-        #     active_unit.side != target_unit.side
-        #     and active_unit.side != None
-        #     and target_unit.side != None
-        # ):
-        #     active_unit.number_soldiers, target_unit.number_soldiers = (
-        #         active_unit.number_soldiers - target_unit.number_soldiers,
-        #         target_unit.number_soldiers - active_unit.number_soldiers,
-        #     )
-
-        #     for unit in selected_units:
-        #         unit.active = False
-        #     selected_units = []  # Очищаем список выбранных юнитов
-
-        # else:
-        #     selected_units[1].active = False
-        #     selected_units.pop()
+        if (
+            active_unit.side != target_unit.side
+            and active_unit.side is not None
+            and target_unit.side is not None
+        ):
+            attack(active_unit, target_unit)
+            for unit in selected_units:
+                unit.active = False
+            selected_units = []  # Очищаем список выбранных юнитов
 
     for row in range(4):
         for col in range(4):
@@ -193,9 +185,13 @@ while running:
                 ],
             )
 
-            if unit.side != None:
+            if unit.side is not None:
                 # Отрисовка числа солдат внутри юнита (черным цветом)
-                text_surface = font.render(str(unit.number_soldiers), True, (0, 0, 0))
+                text_surface = font.render(
+                    str(unit.number_soldiers),
+                    True,
+                    (0, 0, 0),
+                )
                 text_rect = text_surface.get_rect()
                 text_rect.center = (unit.x, unit.y - 20)
                 screen.blit(text_surface, text_rect)
