@@ -5,6 +5,9 @@ name = "pypi"
 
 [packages]
 pygame = "*"
+black = "*"
+flake8 = "*"
+isort = "*"
 
 [dev-packages]
 

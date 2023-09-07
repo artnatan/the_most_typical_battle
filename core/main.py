@@ -1,64 +1,31 @@
 import pygame
 import math
+from hexagon import Hexagon
+from units import Unit
+from constants import *
+from image_dict import unit_images
+from functions import move, attack
 
 # Инициализация Pygame
 pygame.init()
-
-# Определение цветов
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-BLUE = (0, 0, 255)
-BLACK = (0, 0, 0)
-
-# Размер экрана
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-
-# Размеры гексагональных тайлов
-HEX_SIZE = 50
-HEX_WIDTH = int(2 * HEX_SIZE)
-HEX_HEIGHT = int(math.sqrt(3) * HEX_SIZE)
-
-# Размеры юнита
-UNIT_SIZE = 40
-UNIT_WIDTH = int(2 * UNIT_SIZE)
-UNIT_HEIGHT = int(math.sqrt(3) * UNIT_SIZE)
-
-# Толщина линии для обводки гексагонов
-LINE_WIDTH = 2
 
 # Создание экрана
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Hexagonal Grid")
 
-
-# Создание класса для представления гексагональных тайлов
-class Hexagon:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.active = False
-
-
-# Создание класса для представления юнита
-class Unit:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.active = False
-
-
 # Создание списка для хранения гексагональных тайлов и юнитов
 hexagons = []
 units = []
 
-# Создание гексагональной сетки 4x4
-for row in range(4):
+start_x = (SCREEN_WIDTH - 3 * HEX_WIDTH * 0.75) / 2
+start_y = (SCREEN_HEIGHT - 3 * HEX_HEIGHT - HEX_HEIGHT * 0.5) / 2
+
+font = pygame.font.Font(None, 24)
+
+# Создание юнитов игрока 1 (верхние 8 гексов)
+for row in range(2):
     hexagons_row = []
     units_row = []
-
-    start_x = (SCREEN_WIDTH - 4 * HEX_WIDTH * 0.75) / 2
-    start_y = (SCREEN_HEIGHT - 4 * HEX_HEIGHT - HEX_HEIGHT * 0.5) / 2
     for col in range(4):
         x = start_x + col * HEX_WIDTH * 0.75
         y = start_y + row * HEX_HEIGHT
@@ -67,15 +34,41 @@ for row in range(4):
         hexagon = Hexagon(x, y)
         hexagons_row.append(hexagon)
 
-        # Создание юнита в центре гексагона
-        unit = Unit(x, y)
+        # Создание юнита игрока 1
+        unit = Unit(
+            x,
+            y,
+            side="enemy",
+        )
+        units_row.append(unit)
+    hexagons.append(hexagons_row)
+    units.append(units_row)
+
+# Создание юнитов игрока 2 (нижние 8 гексов)
+for row in range(2, 4):
+    hexagons_row = []
+    units_row = []
+    for col in range(4):
+        x = start_x + col * HEX_WIDTH * 0.75
+        y = start_y + row * HEX_HEIGHT
+        if col % 2 < 1:
+            y += HEX_HEIGHT * 0.5
+        hexagon = Hexagon(x, y)
+        hexagons_row.append(hexagon)
+
+        # Создание юнита игрока 2
+        unit = Unit(
+            x,
+            y,
+            side="player",
+        )
         units_row.append(unit)
     hexagons.append(hexagons_row)
     units.append(units_row)
 
 # Основной цикл игры
 running = True
-selected_unit = None
+selected_units = []  # Список выбранных юнитов
 
 while running:
     for event in pygame.event.get():
@@ -86,21 +79,72 @@ while running:
             if event.button == 1:  # Левая кнопка мыши
                 # Проверяем, на каком гексагоне было нажатие мыши
                 mouse_x, mouse_y = pygame.mouse.get_pos()
-                for row in range(4):
-                    for col in range(4):
-                        hexagon = hexagons[row][col]
-                        unit = units[row][col]
-
+                for row in hexagons:
+                    for hexagon in row:
                         # Вычисляем расстояние от точки нажатия до центра гексагона
                         distance = math.sqrt(
                             (mouse_x - hexagon.x) ** 2 + (mouse_y - hexagon.y) ** 2
                         )
                         if distance < HEX_SIZE:
-                            # Если юнит активен, делаем его неактивным, и наоборот
-                            unit.active = not unit.active
-                            if selected_unit is not None and selected_unit is not unit:
-                                selected_unit.active = False
-                            selected_unit = unit
+                            # Проверяем, был ли выбран юнит на этом гексе
+                            for row in units:
+                                for unit in row:
+                                    if unit.x == hexagon.x and unit.y == hexagon.y:
+                                        if unit not in selected_units:
+                                            selected_units.append(
+                                                unit
+                                            )  # Добавляем выбранный юнит
+                                            unit.active = True
+                                        else:
+                                            # Если юнит уже был выбран, убираем его из выбранных
+                                            selected_units.remove(unit)
+                                            unit.active = False
+
+    # Если выбрано два юнита и они могут обменяться местами
+    if len(selected_units) == 2:
+        #     active_unit, target_unit = selected_units[0], selected_units[1]
+
+        #     if active_unit.can_swap_with(target_unit):
+        #         # Обмен местами
+        #         active_unit.x, target_unit.x = (
+        #             target_unit.x,
+        #             active_unit.x,
+        #         )
+        #         active_unit.y, target_unit.y = (
+        #             target_unit.y,
+        #             active_unit.y,
+        #         )
+        #         for unit in selected_units:
+        #             unit.active = False
+        #         selected_units = []  # Очищаем список выбранных юнитов
+        move(selected_units)
+        attack(selected_units)
+
+        # Взаимодействие между враждебными юнитами
+        # if (
+        #     active_unit.side != target_unit.side
+        #     and active_unit.side != None
+        #     and target_unit.side != None
+        # ):
+        #     active_unit.number_soldiers, target_unit.number_soldiers = (
+        #         active_unit.number_soldiers - target_unit.number_soldiers,
+        #         target_unit.number_soldiers - active_unit.number_soldiers,
+        #     )
+
+        #     for unit in selected_units:
+        #         unit.active = False
+        #     selected_units = []  # Очищаем список выбранных юнитов
+
+        # else:
+        #     selected_units[1].active = False
+        #     selected_units.pop()
+
+    for row in range(4):
+        for col in range(4):
+            unit = units[row][col]
+            if unit and not unit.is_alive():
+                unit.side = None
+                unit.number_soldiers = 0
 
     # Отрисовка гексагонов и юнитов
     screen.fill(WHITE)
@@ -138,7 +182,7 @@ while running:
             # Рисуем units
             pygame.draw.polygon(
                 screen,
-                RED if unit.active else BLUE,
+                unit.form_selection(),
                 [
                     (unit.x + UNIT_SIZE, unit.y),
                     (unit.x + UNIT_SIZE // 2, unit.y - UNIT_HEIGHT // 2),
@@ -148,6 +192,24 @@ while running:
                     (unit.x + UNIT_SIZE // 2, unit.y + UNIT_HEIGHT // 2),
                 ],
             )
+
+            if unit.side != None:
+                # Отрисовка числа солдат внутри юнита (черным цветом)
+                text_surface = font.render(str(unit.number_soldiers), True, (0, 0, 0))
+                text_rect = text_surface.get_rect()
+                text_rect.center = (unit.x, unit.y - 20)
+                screen.blit(text_surface, text_rect)
+
+                # Отрисовка изображения для типа юнита
+                unit_image = unit_images.get(unit.unit_type)
+                if unit_image:
+                    image_rect = unit_image.get_rect()
+                    image_rect.center = (
+                        unit.x,
+                        unit.y + 10,
+                    )  # Под текстом
+                    screen.blit(unit_image, image_rect)
+
     pygame.display.flip()
 
 pygame.quit()
