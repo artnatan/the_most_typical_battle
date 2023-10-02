@@ -1,0 +1,6 @@
+__pycache__/
+.github/
+.vscode/
+.buildozer/
+.bin/
+.env

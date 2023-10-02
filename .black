@@ -1,0 +1,12 @@
+# .black
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+# Игнорировать ненужные каталоги
+exclude = '''
+(
+    \.git/,
+    game/.buildozer/
+)
+'''
