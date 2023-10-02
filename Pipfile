@@ -13,7 +13,7 @@ kivy = "2.2.1"
 buildozer = "1.4.0"
 cython = "*"
 pypiwin32 = "223"
-pywin32 = "306"
+pywin32 = "*"
 
 [dev-packages]
 
