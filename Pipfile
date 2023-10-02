@@ -8,6 +8,10 @@ pygame = "*"
 black = "*"
 flake8 = "*"
 isort = "*"
+numpy = "*"
+kivy = "==2.2.1"
+buildozer = "1.4.0"
+cython = "*"
 
 [dev-packages]
 
