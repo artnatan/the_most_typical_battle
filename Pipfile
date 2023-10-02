@@ -12,6 +12,7 @@ numpy = "*"
 kivy = "==2.2.1"
 buildozer = "1.4.0"
 cython = "*"
+pypiwin32 = "==223"
 
 [dev-packages]
 
