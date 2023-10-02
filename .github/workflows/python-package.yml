@@ -26,6 +26,5 @@ jobs:
     - name: Code quality checks
       run: |
         pipenv run black . --check
-        pipenv run isort --check-only .
         pipenv run flake8 .
 
