@@ -1,0 +1,24 @@
+# The Most Typical Battle
+
+это стратегия для 2х игроков (бот для сингл плеера в разработке), в которой игроку необходимо победить армию соперника.
+
+![MyBattle](https://github.com/artnatan/the_most_typical_battle/blob/master/game/images/bg_1.png?raw=true)
+
+## Описание
+
+The Most Typical Battle - это игра с гексогональным полем и отрядами юнитов. Каждый тип юнита сильнее другого по принципу камень-ножницы-бумага. Так же в игре присутствуют рандомные события, чтобы добавить нервов. Основная цель игры - победить все вражеские отряды.
+
+## Как начать играть
+
+Чтобы начать играть, просто скачайте игру на свое устройство:
+
+[Скачать The Most Typical Battle](https://github.com/artnatan/the_most_typical_battle/blob/master/game/bin/mybattle-0.8.apk)
+
+Установите игру на своем устройстве и запустите ее.
+
+![Скриншот геймплея](https://github.com/artnatan/the_most_typical_battle/blob/master/game/images/bg_1.png?raw=true)
+
+
+## Лицензия
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
