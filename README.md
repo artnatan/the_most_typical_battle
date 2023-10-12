@@ -12,7 +12,7 @@ The Most Typical Battle is a game with a hexagonal battlefield and diverse unit 
 
 To download the game demo:
 
-[Download The Most Typical Battle](https://github.com/artnatan/the_most_typical_battle/blob/master/game/bin/mybattle-0.8.apk)
+[Download The Most Typical Battle](https://github.com/artnatan/the_most_typical_battle/blob/master/game/bin/mybattle-0.3.0.apk)
 
 Install it on your device, and let the battle commence! 
 

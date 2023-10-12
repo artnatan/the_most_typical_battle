@@ -13,7 +13,7 @@ package.domain = com.calabaraburus
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas,ttf
+source.include_exts = py,png,jpg,kv,atlas,ttf,mp3
 
 # (list) List of inclusions using pattern matching
 #source.include_patterns = assets/*,images/*.png
@@ -44,7 +44,7 @@ requirements = python3,pygame,jnius,sdl2,sdl2_image,sdl2_mixer,sdl2_ttf,png
 # requirements.source.kivy = ../../kivy
 
 # (str) Presplash of the application
-#presplash.filename = %(source.dir)s/data/presplash.png
+presplash.filename = %(source.dir)s/images/logo.png
 
 # (str) Icon of the application
 icon.filename = %(source.dir)s/images/command_protection.png
@@ -56,6 +56,7 @@ orientation = portrait
 # (list) List of service to declare
 #services = NAME:ENTRYPOINT_TO_PY,NAME2:ENTRYPOINT2_TO_PY
 
+
 #
 # OSX Specific
 #
@@ -64,7 +65,7 @@ orientation = portrait
 # author = © Copyright Info
 
 # change the major version of python used by the app
-osx.python_version = 3
+osx.python_version = 3.10
 
 # Kivy version to use
 osx.kivy_version = 1.9.1

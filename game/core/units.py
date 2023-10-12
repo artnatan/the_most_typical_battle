@@ -50,7 +50,7 @@ class Unit:
 
     # Генерируем случайное число солдат при создании юнита
     def generate_number_soldiers(self):
-        return random.randint(20, 30)
+        return random.randint(25, 30)
 
     def can_swap_with(self, other_unit):
         # Проверка условий для обмена местами
@@ -87,21 +87,36 @@ class Unit:
     def damage_calculation(self, other_unit):
         if self.unit_type == "spearman":
             if other_unit.unit_type == "knight":
-                return self.number_soldiers - math.ceil(other_unit.number_soldiers / 2)
+                return self.number_soldiers - math.ceil(other_unit.number_soldiers / 1.5)
+            elif other_unit.unit_type == "swordsman":
+                return self.number_soldiers - math.ceil(other_unit.number_soldiers * 1.5)
+            elif other_unit.unit_type == "hero":
+                return self.number_soldiers - math.ceil(other_unit.number_soldiers*2)
             else:
                 return self.number_soldiers - other_unit.number_soldiers
         elif self.unit_type == "swordsman":
             if other_unit.unit_type == "spearman":
-                return self.number_soldiers - math.ceil(other_unit.number_soldiers / 2)
+                return self.number_soldiers - math.ceil(other_unit.number_soldiers / 1.5)
+            elif other_unit.unit_type == "knight":
+                return self.number_soldiers - math.ceil(other_unit.number_soldiers * 1.5)
+            elif other_unit.unit_type == "hero":
+                return self.number_soldiers - math.ceil(other_unit.number_soldiers * 2)
             else:
                 return self.number_soldiers - other_unit.number_soldiers
         elif self.unit_type == "knight":
             if other_unit.unit_type == "swordsman":
-                return self.number_soldiers - math.ceil(other_unit.number_soldiers / 2)
+                return self.number_soldiers - math.ceil(other_unit.number_soldiers / 1.5)
+            elif other_unit.unit_type == "spearman":
+                return self.number_soldiers - math.ceil(other_unit.number_soldiers * 1.5)
+            elif other_unit.unit_type == "hero":
+                return self.number_soldiers - math.ceil(other_unit.number_soldiers * 2)
             else:
                 return self.number_soldiers - other_unit.number_soldiers
         elif self.unit_type == "hero":
-            return self.number_soldiers - math.ceil(other_unit.number_soldiers / 3)
+            if other_unit.unit_type != "hero":
+                return self.number_soldiers - math.ceil(other_unit.number_soldiers / 2)
+            else:
+                return self.number_soldiers - other_unit.number_soldiers
 
         # return self.number_soldiers - other_unit.number_soldiers
 

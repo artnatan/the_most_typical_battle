@@ -50,3 +50,7 @@ class Command:
             return (150, 150, 150, 128)
         else:
             return self.color
+
+    def play_sound(self,sound):
+        sound.play()
+        

@@ -85,11 +85,23 @@ for command_type, original_image in command_images.items():
     scaled_command_images[command_type] = scaled_image
 
 menu_images = {
-    "SinglePlayer": pygame.image.load(
-        os.path.join(image_folder, "single_player_128.png")
+    "Logo": pygame.image.load(
+        os.path.join(image_folder, "logo.png")
+    ),  # noqa: E501
+    "Info": pygame.image.load(
+        os.path.join(image_folder, "info.png")
+    ),  # noqa: E501
+    "Info_manual_1": pygame.image.load(
+        os.path.join(image_folder, "info_1.png")
+    ),  # noqa: E501
+    "Info_manual_2": pygame.image.load(
+        os.path.join(image_folder, "info_2.png")
+    ),  # noqa: E501
+    "Ok": pygame.image.load(
+        os.path.join(image_folder, "ok.png")
     ),  # noqa: E501
     "MultiPlayer": pygame.image.load(
-        os.path.join(image_folder, "multi_player_128.png")
+        os.path.join(image_folder, "play.png")
     ),  # noqa: E501
     "Repeat": pygame.image.load(
         os.path.join(image_folder, "repeat_128.png")

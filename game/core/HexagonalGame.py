@@ -10,6 +10,7 @@ from core.units import Unit
 from core.menu import Menu
 from core.win_menu import WinMenu
 from core.Preview import Preview
+from core.InfoPanel import InfoPanel
 
 # Команды
 from core.commands.Catapult import Catapult
@@ -35,6 +36,7 @@ from core.constants import (
 
 from core.image_dict import scaled_command_images, scaled_menu_images
 from core.fonts_dict import scaled_font_dict
+from core.sounds_dict import sounds_dict
 
 
 class HexagonalGame:
@@ -42,16 +44,28 @@ class HexagonalGame:
         pygame.init()
         pygame.display.set_caption("Hexagonal Grid")
         self.clock = pygame.time.Clock()
-        self.screen_info = pygame.display.Info()
         self.running = True
         self.game_status = "menu"
-        self.icon = scaled_command_images.get("Protection")  # Загрузка иконки из файла
+        self.return_game_status = ""
+        # self.icon = scaled_menu_images.get("Logo")  # Загрузка иконки из файла
+
+        #загрузка музыки
+        self.click_sound = sounds_dict.get("click")
+        self.main_music = sounds_dict.get("main_music")
+        self.preview_music = sounds_dict.get("preview_music")
+        #игровые звуки
+        self.attack_sound = sounds_dict.get("attack")
+        self.move_sound = sounds_dict.get("move")
+        self.catapult_sound = sounds_dict.get("catapult")
+        self.crossbow_sound = sounds_dict.get("crossbow")
+        self.reserve_sound = sounds_dict.get("reserve")
+        self.protection_sound = sounds_dict.get("protection")
 
         # константы
         # Размер экрана
         self.white = WHITE
-        self.screen_width = self.screen_info.current_w
-        self.screen_height = self.screen_info.current_h
+        self.screen_width = SCREEN_WIDTH
+        self.screen_height = SCREEN_HEIGHT
         # Размеры гексагональных тайлов
         self.hex_size = HEX_SIZE
         self.hex_width = HEX_WIDTH
@@ -66,6 +80,7 @@ class HexagonalGame:
         self.menu = Menu(self.screen)
         self.preview = Preview(self.screen)
         self.win_menu = WinMenu(self.screen)
+        self.info_panel = InfoPanel(self.screen)
 
         # Инициализация игровых объектов
         self.hexagons = self.create_hexagons()
@@ -83,6 +98,27 @@ class HexagonalGame:
         self.current_player = "unknown"
         self.protected_unit = []
         self.command_block = False
+
+        #инфо + дом кнопки
+        self.info = scaled_menu_images.get("Info")
+        self.info_scaled = self.get_size_button(self.info)
+        self.info_rect = self.info_scaled.get_rect()
+        self.info_rect.center = (self.screen_width*0.1, self.screen_height*0.12)
+
+        self.home = scaled_menu_images.get("Home")
+        self.home_scaled = self.get_size_button(self.home)
+        self.home_rect = self.home_scaled.get_rect()
+        self.home_rect.center = (self.screen_width*0.9, self.screen_height*0.12)
+
+    def get_size_button(self, img):
+        if SCREEN_HEIGHT > SCREEN_WIDTH:
+            desired_width = int(img.get_width() * 0.6)
+            desired_height = int(img.get_height() * 0.6)
+            return pygame.transform.scale(img, (desired_width, desired_height))
+        else:
+            return img
+
+
 
     def get_start_x(self):
         return (self.screen_width - 3 * self.hex_width) / 2
@@ -207,14 +243,22 @@ class HexagonalGame:
         self.draw()  # Перерисовать начальное состояние
 
     def run(self):
-        pygame.display.set_icon(self.icon)
+        # pygame.display.set_icon(self.icon)
+        self.preview_music.play()
         self.preview.show()
+        self.main_music.play(-1)
         while self.running:
+
             match self.game_status:
                 case "menu":
                     self.game_status = self.menu.show()
-                    # self.initialize_game()  # Здесь вы можете добавить код инициализации игры
-                    # menu_shown = False
+                    if self.game_status == "info":
+                        self.return_game_status = "menu"
+
+                    game = True
+
+                case "info":
+                    self.game_status = self.info_panel.show(self.return_game_status)
                     game = True
 
                 case "game":
@@ -232,7 +276,20 @@ class HexagonalGame:
                                 game = False
                                 self.running = False
                             elif event.type == pygame.MOUSEBUTTONDOWN:
+                                if self.home_rect.collidepoint(event.pos):
+                                    game = False
+                                    self.click_sound.play()
+                                    self.game_status = "menu"
+                                    self.restart_game()
+                                elif self.info_rect.collidepoint(event.pos):
+                                    game = False
+                                    self.click_sound.play()
+                                    self.game_status = "info"
+                                    self.return_game_status = "game"
+
                                 self.handle_mouse_click()
+
+
 
                         self.update()
                         self.draw()
@@ -248,7 +305,8 @@ class HexagonalGame:
                 case "win_menu":
                     # win_menu_shown = True
                     # while win_menu_shown:
-                    self.game_status = self.win_menu.show(self.current_player)
+                    win = self.win_units_counter()
+                    self.game_status = self.win_menu.show(win)
                     self.restart_game()
                     game = True
                     # w in_menu_shown = False
@@ -279,6 +337,7 @@ class HexagonalGame:
 
     def player_units_counter(self):
         player_units_count = 0
+        enemy_units_count = 0
         for row in range(4):
             for col in range(4):
                 unit = self.units[row][col]
@@ -288,16 +347,39 @@ class HexagonalGame:
                     and unit.protected is False
                 ):
                     player_units_count += 1
-        return player_units_count
+
+                if (
+                    unit.side != self.current_player
+                    and unit.side is not None
+                    and unit.protected is False
+                ):
+                    enemy_units_count += 1
+        if player_units_count ==1 or enemy_units_count == 1:
+            return True
 
     def win_units_counter(self):
-        units_count = 0
+        blue_units_count = 0
+        orange_units_count = 0
         for row in range(4):
             for col in range(4):
                 unit = self.units[row][col]
-                if unit.side != self.current_player and unit.side is not None:
-                    units_count += 1
-        return units_count
+                if (
+                    unit.side == "player"
+                    and unit.side is not None
+                    and unit.protected is False
+                ):
+                    blue_units_count += 1
+
+                if (
+                    unit.side == "enemy"
+                    and unit.side is not None
+                    and unit.protected is False
+                ):
+                    orange_units_count += 1
+        if blue_units_count == 0:
+            return "enemy"        
+        elif orange_units_count == 0:
+            return "player"
 
     def win_units_check(self, side):
         for row in range(4):
@@ -390,27 +472,32 @@ class HexagonalGame:
                 self.rnd_choice_hex()
         else:
             self.rnd_choice_hex()
-
         self.draw()
+        command.play_sound(command.sound_name)
         pygame.time.delay(3000)
 
         if command.name == "Catapult":
+
             command.apply(
                 self.selected_units_command[0]
             )  # Вызов функции применения бонуса
             command.active = False
             self.active_command = False
             self.command_block = True
+            
             self.clear_selected_units_command()
 
         elif command.name == "CrossbowVolley":
             for unit in self.selected_units_command:
+
                 command.apply(
                     unit
                 )  # Вызов функции применения бонуса если выбранно 3 гекса
                 command.active = False
                 self.active_command = False
                 self.command_block = True
+                
+            
             self.clear_selected_units_command()
 
         elif command.name == "ArmyReserve":
@@ -434,6 +521,7 @@ class HexagonalGame:
                     command.active = False
                     self.active_command = False
                     self.command_block = True
+            
             self.clear_selected_units_command()
 
         elif command.name == "Protection":
@@ -445,13 +533,14 @@ class HexagonalGame:
                         "unit": self.selected_units_command[0],
                     }
                 )
+
                 command.apply(
                     self.selected_units_command[0]
                 )  # Вызов функции применения бонуса
                 command.active = False
                 self.active_command = False
                 self.command_block = True
-
+            
             self.clear_selected_units_command()
 
         for hex in self.selected_hex_command:
@@ -520,8 +609,7 @@ class HexagonalGame:
     def choice_rnd_command(self):
         command = random.choice(self.commands)
         if command.name == "Protection":
-            player_units = self.player_units_counter()
-            while command.name == "Protection" and player_units == 1:
+            while command.name == "Protection" and self.player_units_counter():
                 command = random.choice(self.commands)
         for c in self.commands:
             if command == c:
@@ -602,6 +690,7 @@ class HexagonalGame:
 
             # Попробовать переместить юниты
             if active_unit.can_swap_with(target_unit):
+                self.move_sound.play()
                 self.units = active_unit.move_to(target_unit, self.units)
                 self.additional_actions()
 
@@ -611,6 +700,7 @@ class HexagonalGame:
                 and active_unit.side is not None
                 and target_unit.side is not None
             ):
+                self.attack_sound.play()
                 active_unit.attack(target_unit)
                 if active_unit.number_soldiers > 0 and target_unit.number_soldiers <= 0:
                     self.units = active_unit.move_to(target_unit, self.units)
@@ -703,6 +793,8 @@ class HexagonalGame:
 
         # Отображаем текстовую поверхность на экране
         screen.blit(text_surface, (text_x, text_y))
+        self.screen.blit(self.info_scaled,self.info_rect)
+        self.screen.blit(self.home_scaled,self.home_rect)
 
     def draw_top_border(self, screen):
         # Цвет линии верхней границы гексовой сетки
@@ -756,6 +848,7 @@ class HexagonalGame:
         )
 
     def draw(self):
+        
         # Отрисовка состояния игры
         self.screen.fill(self.white)
         if SCREEN_HEIGHT > SCREEN_WIDTH:

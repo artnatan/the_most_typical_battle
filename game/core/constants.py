@@ -5,7 +5,7 @@ import pygame
 
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
-BLUE = (0, 0, 255)
+BLUE = (0,191,255)
 BLACK = (0, 0, 0)
 ORANGE = (255, 165, 0)
 GREEN = (0, 128, 0)
@@ -15,7 +15,10 @@ UNKNOWN_1 = (255, 255, 204)
 pygame.init()
 screen_info = pygame.display.Info()
 SCREEN_WIDTH = screen_info.current_w
-SCREEN_HEIGHT = screen_info.current_h
+SCREEN_HEIGHT = screen_info.current_h*0.915
+
+# SCREEN_WIDTH = 400
+# SCREEN_HEIGHT = 800
 
 ORIG_SCREEN_WIDTH = 400
 ORIG_SCREEN_HEIGHT = 600

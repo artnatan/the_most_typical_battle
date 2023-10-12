@@ -37,7 +37,7 @@ class Preview:
                 current_time - self.start_time < 6000
             ):  # Показываем первый текст в течение 3 секунд
                 text = "Calabaraburus"
-                text_color = ORANGE
+                text_color = BLACK
 
             else:
                 text = "presents"
@@ -45,7 +45,7 @@ class Preview:
 
             text = self.font.render(text, True, text_color)
             text_rect = text.get_rect()
-            text_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2.1)
+            text_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
             self.screen.blit(text, text_rect)
 
             pygame.display.flip()  # Обновляем отображение
