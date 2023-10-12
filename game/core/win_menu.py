@@ -4,10 +4,8 @@ import sys
 from core.constants import (
     SCREEN_HEIGHT,
     SCREEN_WIDTH,
-    WHITE,
     UNKNOWN_1,
     ORANGE,
-    BLACK,
     BLUE,
 )
 
@@ -68,14 +66,13 @@ class WinMenu:
                 bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT)
             )
 
-
             text = "Blue WIN" if current_player == "player" else "Orange WIN"
             text_color = BLUE if current_player == "player" else ORANGE
 
             # Получаем размеры текста
             text_surface = self.font.render(text, True, text_color)
             text_rect = text_surface.get_rect()
-            text_rect.center = (SCREEN_WIDTH //2, SCREEN_HEIGHT//2)
+            text_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
 
             # рисуем фон и кнопки
             self.screen.blit(background_image, (0, 0))

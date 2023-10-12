@@ -87,27 +87,39 @@ class Unit:
     def damage_calculation(self, other_unit):
         if self.unit_type == "spearman":
             if other_unit.unit_type == "knight":
-                return self.number_soldiers - math.ceil(other_unit.number_soldiers / 1.5)
+                return self.number_soldiers - math.ceil(
+                    other_unit.number_soldiers / 1.5
+                )
             elif other_unit.unit_type == "swordsman":
-                return self.number_soldiers - math.ceil(other_unit.number_soldiers * 1.5)
+                return self.number_soldiers - math.ceil(
+                    other_unit.number_soldiers * 1.5
+                )
             elif other_unit.unit_type == "hero":
-                return self.number_soldiers - math.ceil(other_unit.number_soldiers*2)
+                return self.number_soldiers - math.ceil(other_unit.number_soldiers * 2)
             else:
                 return self.number_soldiers - other_unit.number_soldiers
         elif self.unit_type == "swordsman":
             if other_unit.unit_type == "spearman":
-                return self.number_soldiers - math.ceil(other_unit.number_soldiers / 1.5)
+                return self.number_soldiers - math.ceil(
+                    other_unit.number_soldiers / 1.5
+                )
             elif other_unit.unit_type == "knight":
-                return self.number_soldiers - math.ceil(other_unit.number_soldiers * 1.5)
+                return self.number_soldiers - math.ceil(
+                    other_unit.number_soldiers * 1.5
+                )
             elif other_unit.unit_type == "hero":
                 return self.number_soldiers - math.ceil(other_unit.number_soldiers * 2)
             else:
                 return self.number_soldiers - other_unit.number_soldiers
         elif self.unit_type == "knight":
             if other_unit.unit_type == "swordsman":
-                return self.number_soldiers - math.ceil(other_unit.number_soldiers / 1.5)
+                return self.number_soldiers - math.ceil(
+                    other_unit.number_soldiers / 1.5
+                )
             elif other_unit.unit_type == "spearman":
-                return self.number_soldiers - math.ceil(other_unit.number_soldiers * 1.5)
+                return self.number_soldiers - math.ceil(
+                    other_unit.number_soldiers * 1.5
+                )
             elif other_unit.unit_type == "hero":
                 return self.number_soldiers - math.ceil(other_unit.number_soldiers * 2)
             else:

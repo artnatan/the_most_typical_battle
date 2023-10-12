@@ -18,7 +18,7 @@ class InfoPanel:
         self.click_sound = sounds_dict.get("click")
 
         self.ok_rect = self.ok_img.get_rect()
-        self.ok_rect.center = (SCREEN_WIDTH //2, self.get_height())
+        self.ok_rect.center = (SCREEN_WIDTH // 2, self.get_height())
 
         self.font = scaled_font_dict.get("oswald_font")
         self.radius = 15
@@ -27,8 +27,8 @@ class InfoPanel:
         img = scaled_menu_images.get("Ok")
         if SCREEN_HEIGHT > SCREEN_WIDTH:
             return pygame.transform.scale(
-                    img, (img.get_width()*0.7, img.get_height()*0.7)
-                )
+                img, (img.get_width() * 0.7, img.get_height() * 0.7)
+            )
         else:
             return img
 
@@ -52,7 +52,6 @@ class InfoPanel:
                         info_panel_running = False
                         return return_back
 
-
             if SCREEN_HEIGHT > SCREEN_WIDTH:
                 bg_image = scaled_menu_images.get("Info_manual_1")
             else:
@@ -62,7 +61,7 @@ class InfoPanel:
                 bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT)
             )
             self.screen.blit(background_image, (0, 0))
-            
-            self.screen.blit(self.ok_img,self.ok_rect)
+
+            self.screen.blit(self.ok_img, self.ok_rect)
 
             pygame.display.flip()

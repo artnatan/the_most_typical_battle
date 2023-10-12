@@ -51,6 +51,5 @@ class Command:
         else:
             return self.color
 
-    def play_sound(self,sound):
+    def play_sound(self, sound):
         sound.play()
-        

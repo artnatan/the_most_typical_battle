@@ -59,8 +59,8 @@ class Menu:
                 bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT)
             )
             self.screen.blit(background_image, (0, 0))
-            self.screen.blit(self.singleplayer_image,self.singleplayer_rect)
-            self.screen.blit(self.multiplayer_image,self.multiplayer_rect)
+            self.screen.blit(self.singleplayer_image, self.singleplayer_rect)
+            self.screen.blit(self.multiplayer_image, self.multiplayer_rect)
             # pygame.draw.rect(
             #     self.screen, WHITE, self.singleplayer_rect, border_radius=15
             # )
@@ -80,5 +80,3 @@ class Menu:
             # text_rect.center = (SCREEN_WIDTH // 2, 50)
             # self.screen.blit(text, text_rect)
             pygame.display.flip()
-
-

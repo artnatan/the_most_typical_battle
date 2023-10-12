@@ -1,5 +1,5 @@
 # Класс для меню
-from core.constants import BLACK, SCREEN_HEIGHT, SCREEN_WIDTH, ORANGE
+from core.constants import BLACK, SCREEN_HEIGHT, SCREEN_WIDTH
 from core.fonts_dict import scaled_font_dict
 from core.image_dict import scaled_menu_images
 
